@@ -5,16 +5,16 @@ class TestHasOneDataObject extends \DataObject
     public function has_one($component = null)
     {
         return array(
-            'Parent' => 'DataObject'
+            'Parent' => 'TestHasManyDataObject'
         );
     }
 
     public function Parent()
     {
-        return new \DataObject(
+        return new \TestHasManyDataObject(
             array(
                 'ID'        => 1,
-                'ClassName' => 'DataObject',
+                'ClassName' => 'TestHasManyDataObject',
                 'Test'      => 'Test'
             )
         );
