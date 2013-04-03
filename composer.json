@@ -1,0 +1,29 @@
+{
+    "name": "camspiers/silverstripe-fixture-generator",
+    "description": "Allows the generation of SilverStripe unit test fixtures from existing DataObjects either programatically created or from the database",
+    "authors": [
+        {
+            "name": "Cam Spiers",
+            "email": "camspiers@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Camspiers\\SilverStripe\\FixtureGenerator": "src/"
+        }
+    },
+    "require": {
+        "symfony/yaml": "~2.2"
+    },
+    "require-dev": {
+        "symfony/class-loader": "~2.2",
+        "silverstripe/framework": "~2.4"
+    },
+    "extra": {
+        "installer-paths": {
+            "sapphire": [
+                "silverstripe/framework"
+            ]
+        }
+    }
+}
