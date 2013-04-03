@@ -9,7 +9,7 @@ Creating fixtures files for unit tests is tedious at best, and this library's go
 # Installation (with composer)
 
 ```bash
-$ composer require camspiers/silverstripe-fixturegenerator
+$ composer require camspiers/silverstripe-fixturegenerator:~0.1
 ```
 
 # Usage
