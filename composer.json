@@ -1,6 +1,7 @@
 {
     "name": "camspiers/silverstripe-fixturegenerator",
     "description": "Allows the generation of SilverStripe unit test fixtures from existing DataObjects either programatically created or from the database",
+    "license": "MIT",
     "authors": [
         {
             "name": "Cam Spiers",

@@ -21,7 +21,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                     )
                 )
             ),
-            $this->generator->generate(
+            $this->generator->process(
                 new \DataObjectSet(
                     array(
                         new \DataObject(
@@ -52,7 +52,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                     )
                 )
             ),
-            $this->generator->generate(
+            $this->generator->process(
                 new \DataObjectSet(
                     array(
                         new \TestHasOneDataObject(
@@ -83,7 +83,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                     )
                 )
             ),
-            $this->generator->generate(
+            $this->generator->process(
                 new \DataObjectSet(
                     array(
                         new \TestHasManyDataObject(
