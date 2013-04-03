@@ -1,4 +1,4 @@
-# SilverStripe Fixer Generator
+# SilverStripe Fixture Generator
 
 [![Build Status](https://travis-ci.org/camspiers/silverstripe-fixturegenerator.png?branch=master)](https://travis-ci.org/camspiers/silverstripe-fixturegenerator)
 
