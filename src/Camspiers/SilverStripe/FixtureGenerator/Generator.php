@@ -2,6 +2,9 @@
 
 namespace Camspiers\SilverStripe\FixtureGenerator;
 
+use DataObject;
+use DataObjectSet;
+
 class Generator
 {
     /**
@@ -11,76 +14,80 @@ class Generator
     {
         $this->dumper = $dumper;
     }
-
-    public function process(\DataObjectSet $dataObjectSet)
+    /**
+     * @param DataObjectSet $dataObjectSet
+     * @return mixed
+     */
+    public function process(DataObjectSet $dataObjectSet)
     {
-        $data = array();
+        $map = array();
         if ($dataObjectSet->Count() > 0) {
             foreach ($dataObjectSet as $dataObject) {
-                $data = $this->generateFromDataObject($dataObject, $data);
+                if (!$this->hasDataObject($dataObject, $map)) {
+                    $map = $this->generateFromDataObject($dataObject, $map);
+                }
             }
         }
 
-        return $this->dumper->dump(array_reverse($data, true));
+        return $this->dumper->dump(array_reverse($map, true));
     }
-
-    private function generateFromDataObject(\DataObject $dataObject, array $map = array())
+    /**
+     * @param DataObject $dataObject
+     * @param array      $map
+     * @return array
+     */
+    private function generateFromDataObject(DataObject $dataObject, array $map = array())
     {
         $className = $dataObject->ClassName;
-        // If we havn't encontered a object of ClassName, add ClassName to data
+        $id = $dataObject->ID;
+        // If we haven't encountered a object of ClassName, add ClassName to data
         if (!isset($map[$className])) {
             $map[$className] = array();
         }
-        // Skip the object if we have already seen it
-        if (!isset($map[$className][$dataObject->ID])) {
-            // Add the object to the
-            $map[$className][$dataObject->ID] = $this->getMap($dataObject);
-            // Loop over the has one of this object
-            $hasOnes = $dataObject->has_one();
-            if ($hasOnes) {
-                foreach ($hasOnes as $relName => $relClass) {
-                    // Get the dataobject from the relation
-                    $hasOne = $dataObject->$relName();
-                    // Only process it if it exists
-                    if ($hasOne->exists()) {
-                        // Recursively generate a map for this object
-                        $map = $this->generateFromDataObject($hasOne, $map);
-                        // Add the relation to the current dataobjects map
-                        $map[$className][$dataObject->ID] = array_merge(
-                            $map[$className][$dataObject->ID],
-                            array(
-                                $relName => "=>$relClass." . $hasOne->ID
-                            )
-                        );
-                    }
+        // Add the object to the
+        $map[$className][$id] = $this->getMap($dataObject);
+        // Loop over the has one of this object
+        if ($hasOnes = $dataObject->has_one()) {
+            foreach ($hasOnes as $relName => $relClass) {
+                // Get the dataobject from the relation
+                $hasOne = $dataObject->$relName();
+                // Only process it if it exists
+                if ($hasOne->exists() && !$this->hasDataObject($hasOne, $map)) {
+                    // Recursively generate a map for this object
+                    $map = $this->generateFromDataObject($hasOne, $map);
+                    // Add the relation to the current dataobjects map
+                    $map[$className][$id] = array_merge(
+                        $map[$className][$id],
+                        array(
+                            $relName => "=>$relClass." . $hasOne->ID
+                        )
+                    );
                 }
             }
-            // Loop over the has many relations
-            $hasManys = $dataObject->has_many();
-            if ($hasManys) {
-                foreach ($hasManys as $relName => $relClass) {
-                    // Get the dataobjects from the relation
-                    $dataObjects = $dataObject->$relName();
-                    // If any exist
-                    if ($dataObjects instanceof \DataObjectSet && count($dataObjects) > 0) {
-                        // Loops of each dataobject
-                        foreach ($dataObjects as $hasMany) {
-                            // Only process it if it exists
-                            if ($hasMany->exists()) {
-                                // Recursively generate a map for this object
-                                $map = $this->generateFromDataObject($hasMany, $map);
-                                // Add the relation to the original objects map
-                                if (!isset($map[$className][$dataObject->ID][$relName])) {
-                                    $map[$className][$dataObject->ID] = array_merge(
-                                        $map[$className][$dataObject->ID],
-                                        array(
-                                            $relName => "=>$relClass." . $hasMany->ID
-                                        )
-                                    );
-                                } else {
-                                    $map[$className][$dataObject->ID][$relName] .= ", =>$relClass." . $hasMany->ID;
-                                }
-
+        }
+        // Loop over the has many relations
+        if ($hasManys = $dataObject->has_many()) {
+            foreach ($hasManys as $relName => $relClass) {
+                // Get the dataobjects from the relation
+                $items = $dataObject->$relName();
+                // If any exist
+                if ($items instanceof DataObjectSet && count($items) > 0) {
+                    // Loops of each dataobject
+                    foreach ($items as $hasMany) {
+                        // Only process it if it exists
+                        if ($hasMany->exists() && !$this->hasDataObject($hasMany, $map)) {
+                            // Recursively generate a map for this object
+                            $map = $this->generateFromDataObject($hasMany, $map);
+                            // Add the relation to the original objects map
+                            if (!isset($map[$className][$id][$relName])) {
+                                $map[$className][$id] = array_merge(
+                                    $map[$className][$id],
+                                    array(
+                                        $relName => "=>$relClass." . $hasMany->ID
+                                    )
+                                );
+                            } else {
+                                $map[$className][$id][$relName] .= ", =>$relClass." . $hasMany->ID;
                             }
                         }
                     }
@@ -90,8 +97,20 @@ class Generator
 
         return $map;
     }
-
-    private function getMap(\DataObject $dataObject)
+    /**
+     * @param DataObject $dataObject
+     * @param array      $map
+     * @return bool
+     */
+    private function hasDataObject(DataObject $dataObject, array $map = array())
+    {
+        return isset($map[$dataObject->ClassName][$dataObject->ID]);
+    }
+    /**
+     * @param DataObject $dataObject
+     * @return array
+     */
+    private function getMap(DataObject $dataObject)
     {
         $map = $dataObject->toMap();
         unset($map['Created']);
