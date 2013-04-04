@@ -56,12 +56,7 @@ class Generator
                     // Recursively generate a map for this object
                     $map = $this->generateFromDataObject($hasOne, $map);
                     // Add the relation to the current dataobjects map
-                    $map[$className][$id] = array_merge(
-                        $map[$className][$id],
-                        array(
-                            $relName => "=>$relClass." . $hasOne->ID
-                        )
-                    );
+                    $map[$className][$id][$relName] = "=>$relClass." . $hasOne->ID;
                 }
             }
         }
