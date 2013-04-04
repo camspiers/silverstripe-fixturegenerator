@@ -11,7 +11,7 @@ class Generator
     const CLASS_MODE_EXCLUDE = 1;
 
     private $dumper;
-    private $classes;
+    private $relations;
     private $mode;
     /**
      * @param DumperInterface $dumper
@@ -20,11 +20,11 @@ class Generator
      */
     public function __construct(
         DumperInterface $dumper = null,
-        array $classes = null,
+        array $relations = null,
         $mode = self::CLASS_MODE_INCLUDE
     ) {
         $this->dumper = $dumper;
-        $this->classes = $classes;
+        $this->relations = $relations;
         $this->mode = $mode;
     }
     /**
@@ -62,7 +62,7 @@ class Generator
         // Loop over the has one of this object
         if ($hasOnes = $dataObject->has_one()) {
             foreach ($hasOnes as $relName => $relClass) {
-                if ($this->passCondition($relClass)) {
+                if ($this->isAllowedRelation("$className.$relName")) {
                     // Get the dataobject from the relation
                     $hasOne = $dataObject->$relName();
                     // Only process it if it exists
@@ -79,7 +79,7 @@ class Generator
         if ($hasManys = $dataObject->has_many()) {
             foreach ($hasManys as $relName => $relClass) {
                 // Get the dataobjects from the relation
-                if ($this->passCondition($relClass)) {
+                if ($this->isAllowedRelation("$className.$relName")) {
                     $items = $dataObject->$relName();
                     // If any exist
                     if ($items instanceof DataObjectSet && count($items) > 0) {
@@ -99,6 +99,37 @@ class Generator
                                     );
                                 } else {
                                     $map[$className][$id][$relName] .= ", =>$relClass." . $hasMany->ID;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Loop over the many many relations
+        if ($manyManys = $dataObject->many_many()) {
+            foreach ($manyManys as $relName => $relClass) {
+                // Get the dataobjects from the relation
+                if ($this->isAllowedRelation("$className.$relName")) {
+                    $items = $dataObject->$relName();
+                    // If any exist
+                    if ($items instanceof DataObjectSet && count($items) > 0) {
+                        // Loops of each dataobject
+                        foreach ($items as $manyMany) {
+                            // Only process it if it exists
+                            if ($manyMany->exists() && !$this->hasDataObject($manyMany, $map)) {
+                                // Recursively generate a map for this object
+                                $this->generateFromDataObject($manyMany, $map);
+                                // Add the relation to the original objects map
+                                if (!isset($map[$className][$id][$relName])) {
+                                    $map[$className][$id] = array_merge(
+                                        $map[$className][$id],
+                                        array(
+                                            $relName => "=>$relClass." . $manyMany->ID
+                                        )
+                                    );
+                                } else {
+                                    $map[$className][$id][$relName] .= ", =>$relClass." . $manyMany->ID;
                                 }
                             }
                         }
@@ -138,15 +169,15 @@ class Generator
 
         return $map;
     }
-    private function passCondition($className)
+    private function isAllowedRelation($relation)
     {
-        if (is_null($this->classes)) {
+        if (is_null($this->relations)) {
             return true;
         } else {
             if ($this->mode == self::CLASS_MODE_INCLUDE) {
-                return in_array($className, $this->classes);
+                return in_array($relation, $this->relations);
             } else {
-                return !in_array($className, $this->classes);
+                return !in_array($relation, $this->relations);
             }
         }
     }
