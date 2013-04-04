@@ -20,7 +20,7 @@ use Camspiers\SilverStripe\FixtureGenerator;
 $records = //some DataObjectSet
 
 (new FixtureGenerator\Generator(
-    new FixtureGenerator\Yaml(
+    new FixtureGenerator\Dumpers\Yaml(
         __DIR__ . '/tests/MyFixture.yml'
     )
 ))->process($records);
