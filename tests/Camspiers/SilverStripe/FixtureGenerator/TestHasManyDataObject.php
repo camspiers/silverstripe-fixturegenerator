@@ -5,7 +5,7 @@ class TestHasManyDataObject extends DataObject
     public function has_many($component = null, $classOnly = true)
     {
         return array(
-            'Items' => 'DataObject'
+            'Items' => 'TestHasOneDataObject'
         );
     }
 
@@ -13,12 +13,11 @@ class TestHasManyDataObject extends DataObject
     {
         return new \DataObjectSet(
             array(
-                new \DataObject(
+                new \TestHasOneDataObject(
                     array(
-                        'ID'                      => 1,
-                        'ClassName'               => 'DataObject',
-                        'Test'                    => 'Test',
-                        'TestHasManyDataObjectID' => 1
+                        'ID'        => 1,
+                        'ClassName' => 'TestHasOneDataObject',
+                        'Test'      => 'Test'
                     )
                 )
             )

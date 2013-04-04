@@ -43,10 +43,10 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                 'TestHasOneDataObject' => array(
                     1 => array(
                         'Test'   => 'Test',
-                        'Parent' => '=>DataObject.1'
+                        'Parent' => '=>TestHasManyDataObject.1'
                     )
                 ),
-                'DataObject'           => array(
+                'TestHasManyDataObject' => array(
                     1 => array(
                         'Test' => 'Test'
                     )
@@ -74,10 +74,10 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                 'TestHasManyDataObject' => array(
                     1 => array(
                         'Test'  => 'Test',
-                        'Items' => '=>DataObject.1'
+                        'Items' => '=>TestHasOneDataObject.1'
                     )
                 ),
-                'DataObject'            => array(
+                'TestHasOneDataObject' => array(
                     1 => array(
                         'Test' => 'Test'
                     )
