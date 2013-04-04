@@ -7,12 +7,25 @@ use DataObjectSet;
 
 class Generator
 {
+    const CLASS_MODE_INCLUDE = 0;
+    const CLASS_MODE_EXCLUDE = 1;
+
+    private $dumper;
+    private $classes;
+    private $mode;
     /**
      * @param DumperInterface $dumper
+     * @param array           $classes
+     * @param int             $mode
      */
-    public function __construct(DumperInterface $dumper)
-    {
+    public function __construct(
+        DumperInterface $dumper = null,
+        array $classes = null,
+        $mode = self::CLASS_MODE_INCLUDE
+    ) {
         $this->dumper = $dumper;
+        $this->classes = $classes;
+        $this->mode = $mode;
     }
     /**
      * @param DataObjectSet $dataObjectSet
@@ -36,7 +49,7 @@ class Generator
      * @param array      $map
      * @return array
      */
-    private function generateFromDataObject(DataObject $dataObject, array $map = array())
+    private function generateFromDataObject(DataObject $dataObject, array &$map = array())
     {
         $className = $dataObject->ClassName;
         $id = $dataObject->ID;
@@ -49,14 +62,16 @@ class Generator
         // Loop over the has one of this object
         if ($hasOnes = $dataObject->has_one()) {
             foreach ($hasOnes as $relName => $relClass) {
-                // Get the dataobject from the relation
-                $hasOne = $dataObject->$relName();
-                // Only process it if it exists
-                if ($hasOne->exists() && !$this->hasDataObject($hasOne, $map)) {
-                    // Recursively generate a map for this object
-                    $map = $this->generateFromDataObject($hasOne, $map);
-                    // Add the relation to the current dataobjects map
-                    $map[$className][$id][$relName] = "=>$relClass." . $hasOne->ID;
+                if ($this->passCondition($relClass)) {
+                    // Get the dataobject from the relation
+                    $hasOne = $dataObject->$relName();
+                    // Only process it if it exists
+                    if ($hasOne->exists() && !$this->hasDataObject($hasOne, $map)) {
+                        // Recursively generate a map for this object
+                        $this->generateFromDataObject($hasOne, $map);
+                        // Add the relation to the current dataobjects map
+                        $map[$className][$id][$relName] = "=>$relClass." . $hasOne->ID;
+                    }
                 }
             }
         }
@@ -64,25 +79,27 @@ class Generator
         if ($hasManys = $dataObject->has_many()) {
             foreach ($hasManys as $relName => $relClass) {
                 // Get the dataobjects from the relation
-                $items = $dataObject->$relName();
-                // If any exist
-                if ($items instanceof DataObjectSet && count($items) > 0) {
-                    // Loops of each dataobject
-                    foreach ($items as $hasMany) {
-                        // Only process it if it exists
-                        if ($hasMany->exists() && !$this->hasDataObject($hasMany, $map)) {
-                            // Recursively generate a map for this object
-                            $map = $this->generateFromDataObject($hasMany, $map);
-                            // Add the relation to the original objects map
-                            if (!isset($map[$className][$id][$relName])) {
-                                $map[$className][$id] = array_merge(
-                                    $map[$className][$id],
-                                    array(
-                                        $relName => "=>$relClass." . $hasMany->ID
-                                    )
-                                );
-                            } else {
-                                $map[$className][$id][$relName] .= ", =>$relClass." . $hasMany->ID;
+                if ($this->passCondition($relClass)) {
+                    $items = $dataObject->$relName();
+                    // If any exist
+                    if ($items instanceof DataObjectSet && count($items) > 0) {
+                        // Loops of each dataobject
+                        foreach ($items as $hasMany) {
+                            // Only process it if it exists
+                            if ($hasMany->exists() && !$this->hasDataObject($hasMany, $map)) {
+                                // Recursively generate a map for this object
+                                $this->generateFromDataObject($hasMany, $map);
+                                // Add the relation to the original objects map
+                                if (!isset($map[$className][$id][$relName])) {
+                                    $map[$className][$id] = array_merge(
+                                        $map[$className][$id],
+                                        array(
+                                            $relName => "=>$relClass." . $hasMany->ID
+                                        )
+                                    );
+                                } else {
+                                    $map[$className][$id][$relName] .= ", =>$relClass." . $hasMany->ID;
+                                }
                             }
                         }
                     }
@@ -120,5 +137,17 @@ class Generator
         }
 
         return $map;
+    }
+    private function passCondition($className)
+    {
+        if (is_null($this->classes)) {
+            return true;
+        } else {
+            if ($this->mode == self::CLASS_MODE_INCLUDE) {
+                return in_array($className, $this->classes);
+            } else {
+                return !in_array($className, $this->classes);
+            }
+        }
     }
 }
