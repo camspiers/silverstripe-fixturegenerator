@@ -238,7 +238,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             array(
                 '*'
             ),
-            Generator::CLASS_MODE_EXCLUDE
+            Generator::RELATION_MODE_EXCLUDE
         );
         $this->assertEquals(
             array(
@@ -267,7 +267,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             array(
                 'TestHasManyDataObject.*'
             ),
-            Generator::CLASS_MODE_EXCLUDE
+            Generator::RELATION_MODE_EXCLUDE
         );
         $this->assertEquals(
             array(

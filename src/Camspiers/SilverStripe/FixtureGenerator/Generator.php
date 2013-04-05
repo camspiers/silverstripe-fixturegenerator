@@ -7,8 +7,8 @@ use DataObjectSet;
 
 class Generator
 {
-    const CLASS_MODE_INCLUDE = 0;
-    const CLASS_MODE_EXCLUDE = 1;
+    const RELATION_MODE_INCLUDE = 0;
+    const RELATION_MODE_EXCLUDE = 1;
 
     private $dumper;
     private $relations;
@@ -21,7 +21,7 @@ class Generator
     public function __construct(
         DumperInterface $dumper = null,
         array $relations = null,
-        $mode = self::CLASS_MODE_INCLUDE
+        $mode = self::RELATION_MODE_INCLUDE
     ) {
         $this->dumper = $dumper;
         $this->relations = $relations;

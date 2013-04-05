@@ -61,7 +61,7 @@ $records = //some DataObjectSet
         'MyDataObject.SomeHasOneRelation',
         'MyDataObject.SomeHasManyRelation'
     ),
-    FixtureGenerator\Generator::CLASS_MODE_EXCLUDE
+    FixtureGenerator\Generator::RELATION_MODE_EXCLUDE
 ))->process($records);
 ```
 
