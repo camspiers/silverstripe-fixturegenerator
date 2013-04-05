@@ -14,6 +14,8 @@ $ composer require camspiers/silverstripe-fixturegenerator:~0.1
 
 ## Usage
 
+### Example with all relations allowed
+
 ```php
 use Camspiers\SilverStripe\FixtureGenerator;
 
@@ -23,6 +25,43 @@ $records = //some DataObjectSet
     new FixtureGenerator\Dumpers\Yaml(
         __DIR__ . '/tests/MyFixture.yml'
     )
+))->process($records);
+```
+
+### Example with certain relations allowed
+
+```php
+use Camspiers\SilverStripe\FixtureGenerator;
+
+$records = //some DataObjectSet
+
+(new FixtureGenerator\Generator(
+    new FixtureGenerator\Dumpers\Yaml(
+        __DIR__ . '/tests/MyFixture.yml'
+    ),
+    array(
+        'MyDataObject.SomeHasOneRelation',
+        'MyDataObject.SomeHasManyRelation'
+    )
+))->process($records);
+```
+
+### Example with certain relations excluded
+
+```php
+use Camspiers\SilverStripe\FixtureGenerator;
+
+$records = //some DataObjectSet
+
+(new FixtureGenerator\Generator(
+    new FixtureGenerator\Dumpers\Yaml(
+        __DIR__ . '/tests/MyFixture.yml'
+    ),
+    array(
+        'MyDataObject.SomeHasOneRelation',
+        'MyDataObject.SomeHasManyRelation'
+    ),
+    FixtureGenerator\Generator::CLASS_MODE_EXCLUDE
 ))->process($records);
 ```
 
