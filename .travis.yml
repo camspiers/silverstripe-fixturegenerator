@@ -11,5 +11,4 @@ before_script:
 script:
   - phpunit
   - composer require --dev --prefer-dist silverstripe/framework:~3.0
-  - mv sapphire framework
   - phpunit
