@@ -1,6 +1,6 @@
 # SilverStripe Fixture Generator
 
-[![Build Status](https://travis-ci.org/camspiers/silverstripe-fixturegenerator.png?branch=master)](https://travis-ci.org/camspiers/silverstripe-fixturegenerator)
+[![Build Status](https://travis-ci.org/camspiers/silverstripe-fixturegenerator.png?branch=master)](https://travis-ci.org/camspiers/silverstripe-fixturegenerator) against 2.2 and 3.0
 
 Allows the generation of SilverStripe unit test fixtures from existing DataObjects either programatically created or from the database.
 
