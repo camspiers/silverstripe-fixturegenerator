@@ -14,9 +14,9 @@ class Generator
     private $relations;
     private $mode;
     /**
-     * @param DumperInterface $dumper
-     * @param array           $classes
-     * @param int             $mode
+     * @param DumperInterface $dumper    The objec to dump the output with
+     * @param array           $relations An array of shell wildcard patterns
+     * @param int             $mode      The mode the patterns should take, include vs. exclude
      */
     public function __construct(
         DumperInterface $dumper = null,
@@ -169,16 +169,22 @@ class Generator
 
         return $map;
     }
+    /**
+     * @param $relation
+     * @return bool
+     */
     private function isAllowedRelation($relation)
     {
         if (is_null($this->relations)) {
             return true;
         } else {
-            if ($this->mode == self::CLASS_MODE_INCLUDE) {
-                return in_array($relation, $this->relations);
-            } else {
-                return !in_array($relation, $this->relations);
+            foreach ($this->relations as $pattern) {
+                if (fnmatch($pattern, $relation)) {
+                    return !$this->mode;
+                }
             }
+
+            return (boolean)$this->mode;
         }
     }
 }

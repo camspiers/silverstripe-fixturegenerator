@@ -11,7 +11,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->generator = new Generator(new DataArray());
     }
-    public function testGenerateBasic()
+    public function testProcessBasic()
     {
         $this->assertEquals(
             array(
@@ -36,7 +36,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
-    public function testGenerateHasOne()
+    public function testProcessHasOne()
     {
         $this->assertEquals(
             array(
@@ -67,7 +67,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
-    public function testGenerateHasMany()
+    public function testProcessHasMany()
     {
         $this->assertEquals(
             array(
@@ -84,6 +84,200 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             $this->generator->process(
+                new \DataObjectSet(
+                    array(
+                        new \TestHasManyDataObject(
+                            array(
+                                'ClassName' => 'TestHasManyDataObject',
+                                'ID'        => 1,
+                                'Test'      => 'Test'
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+    public function testProcessPatternInclude()
+    {
+        $g = new Generator(
+            new DataArray(),
+            array(
+                'TestHasManyDataObject.Items'
+            )
+        );
+        $this->assertEquals(
+            array(
+                'TestHasManyDataObject' => array(
+                    1 => array(
+                        'Test'  => 'Test',
+                        'Items' => '=>TestHasOneDataObject.1'
+                    )
+                ),
+                'TestHasOneDataObject' => array(
+                    1 => array(
+                        'Test' => 'Test'
+                    )
+                )
+            ),
+            $g->process(
+                new \DataObjectSet(
+                    array(
+                        new \TestHasManyDataObject(
+                            array(
+                                'ClassName' => 'TestHasManyDataObject',
+                                'ID'        => 1,
+                                'Test'      => 'Test'
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        $g = new Generator(
+            new DataArray(),
+            array(
+                'TestHasManyDataObject.*'
+            )
+        );
+        $this->assertEquals(
+            array(
+                'TestHasManyDataObject' => array(
+                    1 => array(
+                        'Test'  => 'Test',
+                        'Items' => '=>TestHasOneDataObject.1'
+                    )
+                ),
+                'TestHasOneDataObject' => array(
+                    1 => array(
+                        'Test' => 'Test'
+                    )
+                )
+            ),
+            $g->process(
+                new \DataObjectSet(
+                    array(
+                        new \TestHasManyDataObject(
+                            array(
+                                'ClassName' => 'TestHasManyDataObject',
+                                'ID'        => 1,
+                                'Test'      => 'Test'
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        $g = new Generator(
+            new DataArray(),
+            array(
+                'TestHasManyDataObject.Test'
+            )
+        );
+        $this->assertEquals(
+            array(
+                'TestHasManyDataObject' => array(
+                    1 => array(
+                        'Test'  => 'Test'
+                    )
+                )
+            ),
+            $g->process(
+                new \DataObjectSet(
+                    array(
+                        new \TestHasManyDataObject(
+                            array(
+                                'ClassName' => 'TestHasManyDataObject',
+                                'ID'        => 1,
+                                'Test'      => 'Test'
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        $g = new Generator(
+            new DataArray(),
+            array(
+                'TestHasManyDataObject.Item?'
+            )
+        );
+        $this->assertEquals(
+            array(
+                'TestHasManyDataObject' => array(
+                    1 => array(
+                        'Test'  => 'Test',
+                        'Items' => '=>TestHasOneDataObject.1'
+                    )
+                ),
+                'TestHasOneDataObject' => array(
+                    1 => array(
+                        'Test' => 'Test'
+                    )
+                )
+            ),
+            $g->process(
+                new \DataObjectSet(
+                    array(
+                        new \TestHasManyDataObject(
+                            array(
+                                'ClassName' => 'TestHasManyDataObject',
+                                'ID'        => 1,
+                                'Test'      => 'Test'
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+    public function testProcessPatternExclude()
+    {
+        $g = new Generator(
+            new DataArray(),
+            array(
+                '*'
+            ),
+            Generator::CLASS_MODE_EXCLUDE
+        );
+        $this->assertEquals(
+            array(
+                'TestHasManyDataObject' => array(
+                    1 => array(
+                        'Test'  => 'Test'
+                    )
+                )
+            ),
+            $g->process(
+                new \DataObjectSet(
+                    array(
+                        new \TestHasManyDataObject(
+                            array(
+                                'ClassName' => 'TestHasManyDataObject',
+                                'ID'        => 1,
+                                'Test'      => 'Test'
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        $g = new Generator(
+            new DataArray(),
+            array(
+                'TestHasManyDataObject.*'
+            ),
+            Generator::CLASS_MODE_EXCLUDE
+        );
+        $this->assertEquals(
+            array(
+                'TestHasManyDataObject' => array(
+                    1 => array(
+                        'Test'  => 'Test'
+                    )
+                )
+            ),
+            $g->process(
                 new \DataObjectSet(
                     array(
                         new \TestHasManyDataObject(
