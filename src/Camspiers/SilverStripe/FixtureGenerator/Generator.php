@@ -4,6 +4,7 @@ namespace Camspiers\SilverStripe\FixtureGenerator;
 
 use DataObject;
 use DataObjectSet;
+use IteratorAggregate;
 
 class Generator
 {
@@ -28,17 +29,15 @@ class Generator
         $this->mode = $mode;
     }
     /**
-     * @param DataObjectSet $dataObjectSet
+     * @param IteratorAggregate $set
      * @return mixed
      */
-    public function process(DataObjectSet $dataObjectSet)
+    public function process(IteratorAggregate $set)
     {
         $map = array();
-        if ($dataObjectSet->Count() > 0) {
-            foreach ($dataObjectSet as $dataObject) {
-                if (!$this->hasDataObject($dataObject, $map)) {
-                    $map = $this->generateFromDataObject($dataObject, $map);
-                }
+        foreach ($set as $dataObject) {
+            if (!$this->hasDataObject($dataObject, $map)) {
+                $map = $this->generateFromDataObject($dataObject, $map);
             }
         }
 

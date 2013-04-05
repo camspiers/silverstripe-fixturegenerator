@@ -12,4 +12,8 @@ $loader = require BASE_PATH . '/vendor/autoload.php';
 use Symfony\Component\ClassLoader\ClassMapGenerator;
 
 $loader->addClassMap(ClassMapGenerator::createMap(BASE_PATH . '/tests'));
-$loader->addClassMap(ClassMapGenerator::createMap(BASE_PATH . '/sapphire'));
+if (file_exists(BASE_PATH . '/sapphire')) {
+    $loader->addClassMap(ClassMapGenerator::createMap(BASE_PATH . '/sapphire'));
+} elseif (file_exists(BASE_PATH . '/framework')) {
+    $loader->addClassMap(ClassMapGenerator::createMap(BASE_PATH . '/framework'));
+}

@@ -7,3 +7,9 @@ php:
 before_script:
   - composer self-update
   - composer install --dev
+
+script:
+  - phpunit
+  - composer require --dev --prefer-dist silverstripe/framework:~3.0
+  - mv sapphire framework
+  - phpunit
