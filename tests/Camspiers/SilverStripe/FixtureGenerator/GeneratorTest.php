@@ -6,10 +6,16 @@ use Camspiers\SilverStripe\FixtureGenerator\Dumpers\DataArray;
 
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
+    protected $dumperStub;
     protected $generator;
     public function setUp()
     {
-        $this->generator = new Generator(new DataArray());
+        $this->dumperStub = $this->getMock(__NAMESPACE__ . '\\DumperInterface');
+        $this->dumperStub->expects($this->any())
+            ->method('dump')
+            ->will($this->returnArgument(0));
+
+        $this->generator = new Generator($this->dumperStub);
     }
     public function testProcessBasic()
     {
@@ -101,7 +107,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     public function testProcessPatternInclude()
     {
         $g = new Generator(
-            new DataArray(),
+            $this->dumperStub,
             array(
                 'TestHasManyDataObject.Items'
             )
@@ -135,7 +141,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             )
         );
         $g = new Generator(
-            new DataArray(),
+            $this->dumperStub,
             array(
                 'TestHasManyDataObject.*'
             )
@@ -169,7 +175,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             )
         );
         $g = new Generator(
-            new DataArray(),
+            $this->dumperStub,
             array(
                 'TestHasManyDataObject.Test'
             )
@@ -197,7 +203,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             )
         );
         $g = new Generator(
-            new DataArray(),
+            $this->dumperStub,
             array(
                 'TestHasManyDataObject.Item?'
             )
@@ -234,7 +240,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     public function testProcessPatternExclude()
     {
         $g = new Generator(
-            new DataArray(),
+            $this->dumperStub,
             array(
                 '*'
             ),
@@ -263,7 +269,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             )
         );
         $g = new Generator(
-            new DataArray(),
+            $this->dumperStub,
             array(
                 'TestHasManyDataObject.*'
             ),
