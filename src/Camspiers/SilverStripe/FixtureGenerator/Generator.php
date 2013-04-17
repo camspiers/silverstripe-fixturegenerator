@@ -5,13 +5,31 @@ namespace Camspiers\SilverStripe\FixtureGenerator;
 use DataObject;
 use IteratorAggregate;
 
+/**
+ * Class Generator
+ * @package Camspiers\SilverStripe\FixtureGenerator
+ */
 class Generator
 {
+    /**
+     * This mode includes relations specified
+     */
     const RELATION_MODE_INCLUDE = 0;
+    /**
+     * This mode excludes relations specified
+     */
     const RELATION_MODE_EXCLUDE = 1;
-
+    /**
+     * @var DumperInterface
+     */
     private $dumper;
+    /**
+     * @var array
+     */
     private $relations;
+    /**
+     * @var int
+     */
     private $mode;
     /**
      * @param DumperInterface $dumper    The objec to dump the output with
