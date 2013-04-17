@@ -3,7 +3,6 @@
 namespace Camspiers\SilverStripe\FixtureGenerator;
 
 use DataObject;
-use DataObjectSet;
 use IteratorAggregate;
 
 class Generator
@@ -81,7 +80,7 @@ class Generator
                 if ($this->isAllowedRelation("$className.$relName")) {
                     $items = $dataObject->$relName();
                     // If any exist
-                    if ($items instanceof DataObjectSet && count($items) > 0) {
+                    if ($items instanceof IteratorAggregate && count($items) > 0) {
                         // Loops of each dataobject
                         foreach ($items as $hasMany) {
                             // Only process it if it exists
@@ -112,7 +111,7 @@ class Generator
                 if ($this->isAllowedRelation("$className.$relName")) {
                     $items = $dataObject->$relName();
                     // If any exist
-                    if ($items instanceof DataObjectSet && count($items) > 0) {
+                    if ($items instanceof IteratorAggregate && count($items) > 0) {
                         // Loops of each dataobject
                         foreach ($items as $manyMany) {
                             // Only process it if it exists
