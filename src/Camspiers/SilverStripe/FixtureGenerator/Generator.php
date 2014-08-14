@@ -90,10 +90,10 @@ class Generator
 
                     // Only process it if it exists
                     if ($hasOne->exists() && !$this->hasDataObject($hasOne, $map)) {
-	                    if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
-		                    // Recursively generate a map for this object
-	                        $this->generateFromDataObject($hasOne, $map);
-	                    }
+                        if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
+                            // Recursively generate a map for this object
+                            $this->generateFromDataObject($hasOne, $map);
+                        }
                         // Add the relation to the current dataobjects map
                         $map[$className][$id][$relName] = "=>$relClassName." . $hasOne->ID;
                     }
@@ -115,10 +115,10 @@ class Generator
 
                             // Only process it if it exists
                             if ($hasMany->exists() && !$this->hasDataObject($hasMany, $map)) {
-	                            if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
+                                if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
                                     // Recursively generate a map for this object
-	                                $this->generateFromDataObject($hasMany, $map);
-	                            }
+                                    $this->generateFromDataObject($hasMany, $map);
+                                }
                                 // Add the relation to the original objects map
                                 if (!isset($map[$className][$id][$relName])) {
                                     $map[$className][$id] = array_merge(
@@ -151,10 +151,10 @@ class Generator
 	                        $relClassName = $manyMany->ClassName;
 
                             if ($manyMany->exists() && !$this->hasDataObject($manyMany, $map)) {
-	                            if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
-		                            // Recursively generate a map for this object
-	                                $this->generateFromDataObject($manyMany, $map);
-	                            }
+                                if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
+                                    // Recursively generate a map for this object
+                                    $this->generateFromDataObject($manyMany, $map);
+                                }
                                 // Add the relation to the original objects map
                                 if (!isset($map[$className][$id][$relName])) {
                                     $map[$className][$id] = array_merge(
