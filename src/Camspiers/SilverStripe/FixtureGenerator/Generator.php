@@ -19,10 +19,10 @@ class Generator
      * This mode excludes relations specified
      */
     const RELATION_MODE_EXCLUDE = 1;
-	/**
-	 * This mode excludes generation of related objects (however relationships may still be generated)
-	 */
-	const RELATED_OBJECT_EXCLUDE = 2;
+    /**
+     * This mode excludes generation of related objects (however relationships may still be generated)
+     */
+    const RELATED_OBJECT_EXCLUDE = 2;
     /**
      * @var DumperInterface
      */
@@ -86,7 +86,7 @@ class Generator
                     // Get the dataobject from the relation
                     $hasOne = $dataObject->$relName();
 
-	                $relClassName = $hasOne->ClassName;
+                    $relClassName = $hasOne->ClassName;
 
                     // Only process it if it exists
                     if ($hasOne->exists() && !$this->hasDataObject($hasOne, $map)) {
@@ -111,7 +111,7 @@ class Generator
                         // Loops of each dataobject
                         foreach ($items as $hasMany) {
 
-	                        $relClassName = $hasMany->ClassName;
+                            $relClassName = $hasMany->ClassName;
 
                             // Only process it if it exists
                             if ($hasMany->exists() && !$this->hasDataObject($hasMany, $map)) {
@@ -148,7 +148,7 @@ class Generator
                         foreach ($items as $manyMany) {
                             // Only process it if it exists
 
-	                        $relClassName = $manyMany->ClassName;
+                            $relClassName = $manyMany->ClassName;
 
                             if ($manyMany->exists() && !$this->hasDataObject($manyMany, $map)) {
                                 if (($this->mode & self::RELATED_OBJECT_EXCLUDE) === 0) {
